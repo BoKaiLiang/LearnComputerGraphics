@@ -1,13 +1,27 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stb_image.h>
+#include <cglm/cglm.h>
 
 #include <stdbool.h>
 #include <stdio.h>
+#include <math.h>
+
+#include "shader.h"
 
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
+
+typedef enum {
+    TRANSLATE,
+    ROTATE,
+    SCALE,
+
+    ACTION_COUNT
+} Action;
+
+static Action model_action = TRANSLATE;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
@@ -16,6 +30,10 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 void on_key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+        model_action = (model_action + 1) % ACTION_COUNT;
+    }
 }
 
 
@@ -45,6 +63,8 @@ int main()
     }
 
     // build and compile our shader program
+    shader_t trans_shader;
+    create_shader(&trans_shader, "shaders/basic.vert", "shaders/basic.frag");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     float vertices[] = {
@@ -129,7 +149,9 @@ int main()
     stbi_image_free(data);
 
     // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)  
-
+    glUseProgram(trans_shader);
+    set_uniform_int(&trans_shader, "texture_box", 0);
+    set_uniform_int(&trans_shader, "texture_smile", 1);
 
     // render loop
     while (!glfwWindowShouldClose(window))
@@ -145,24 +167,50 @@ int main()
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
 
+        glUseProgram(trans_shader);
+
         // create transformations
-        // TODO: set transfromation
+        mat4 model = GLM_MAT4_IDENTITY_INIT;
 
-        // render container
-        // glBindVertexArray(VAO);
-        // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        switch (model_action)
+        {
+            case TRANSLATE:
+            {
+                vec3 movement = { 1, 0, 0 };
+                glm_vec3_scale(movement, sinf(glfwGetTime()), movement);
+                glm_translate(model, movement);
+            }
+            break;
 
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+            case ROTATE:
+            {
+                glm_rotate(model, (float)glfwGetTime(), (vec3){0.0f, 0.0f, 1.0f});
+            }
+            break;
+
+            case SCALE:
+            {
+                glm_scale(model, (vec3){sinf(glfwGetTime()), sinf(glfwGetTime()), 0.0f});
+            }
+            break;
+        
+        default:
+            break;
+        }
+
+        set_uniform_mat4(&trans_shader, "model", model);
+
+        glBindVertexArray(VAO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
-    // optional: de-allocate all resources once they've outlived their purpose:
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
 
-    // glfw: terminate, clearing all previously allocated GLFW resources.
     glfwTerminate();
     return 0;
 }
