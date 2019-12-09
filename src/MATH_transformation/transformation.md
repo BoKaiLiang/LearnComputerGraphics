@@ -2,8 +2,8 @@
 
 * 使用 [recp/cglm](https://github.com/recp/cglm) 對物件進行位移、旋轉、縮放。
 ## 使用
-> 1. Build project using `cmake`.
-> 2. Enter `./build/BASIC_transformation`.
+> 1. Build project by `build.bat`.
+> 2. Enter `./build/MATH_transformation`.
 > 3. Press `SPACE` to show the transformation.
 
 ## 向量與矩陣
