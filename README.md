@@ -8,8 +8,13 @@
 * gcc 8.1.0
 * cmake 3.11.1
 
+## 如何建置
+* 請先確認是否安裝`cmake`(3.1以上)與`gcc`，並設置於環境變數。
+* 開啟`build.bat`進行建置
+
 ## 內容(Contents)
-* [變換 - Transformation](src/BASIC_transformation/transformation.md)
+* [變換 - Transformation](src/MATH_transformation/transformation.md)
+* [投影 - Projection](src/MATH_projection/projection.md)
 
 ## 學習來源(Learning Resources)
 * [Learn OpenGL](https://learnopengl.com/)
