@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.1)
 
 project(MATH_transformation)
 project(MATH_projection)
-project(OGL_camera)
+project(MATH_fps_camera)
 
 FILE(GLOB ALL_CGLM_SRC "deps/ext/cglm/src/*.c")
 
@@ -29,9 +29,9 @@ add_executable(
 )
 
 add_executable(
-    OGL_camera
-    src/OGL_camera/OGL_camera.c
-    src/OGL_camera/camera.c
+    MATH_fps_camera
+    src/MATH_fps_camera/MATH_fps_camera.c
+    src/MATH_fps_camera/camera.c
     deps/shader.c
     deps/util.c
     deps/ext/stb_image/stb_image.c
@@ -49,5 +49,5 @@ include_directories(deps/ext/stb_image)
 if (MINGW)
     target_link_libraries(MATH_transformation glfw ${GLFW_LIBRARIES})
     target_link_libraries(MATH_projection glfw ${GLFW_LIBRARIES})
-    target_link_libraries(OGL_camera glfw ${GLFW_LIBRARIES})
+    target_link_libraries(MATH_fps_camera glfw ${GLFW_LIBRARIES})
 endif()

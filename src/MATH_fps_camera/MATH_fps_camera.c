@@ -60,6 +60,10 @@ void on_mouse_callback(GLFWwindow* window, double xpos, double ypos) {
     camera_process_fov(&camera, xoffset, yoffset);
 }
 
+void on_scroll_callback(GLFWwindow* window, double x_offset, double y_offset) {
+    camera_process_zoom(&camera, y_offset);
+}
+
 int main()
 {
     // glfw: initialize and configure
@@ -69,7 +73,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // glfw window creation
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "OGL_camera", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "FPS_camera", NULL, NULL);
     if (window == NULL)
     {
         glfwTerminate();
@@ -79,6 +83,7 @@ int main()
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetKeyCallback(window, on_key_callback);
     glfwSetCursorPosCallback(window, on_mouse_callback);
+    glfwSetScrollCallback(window, on_scroll_callback);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // glad: load all OpenGL function pointers
