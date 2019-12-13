@@ -56,20 +56,6 @@ add_executable(
     ${ALL_SRC}
 )
 
-# Project: TERRAIN_simple_voxel
-add_executable(
-    TERRAIN_simple_voxel
-    src/TERRAIN_simple_voxel/TERRAIN_simple_voxel.c
-    src/TERRAIN_simple_voxel/camera.c
-    src/TERRAIN_simple_voxel/terrain.c
-    deps/shader.c
-    deps/util.c
-    deps/ext/stb/stb_image.c
-    deps/ext/stb/stb_ds.c
-    deps/ext/glad/src/glad.c
-    ${ALL_SRC}
-)
-
 add_subdirectory(deps/ext/glfw)
 include_directories(deps)
 include_directories(deps/ext/glfw/include)
@@ -82,5 +68,4 @@ if (MINGW)
     target_link_libraries(MATH_projection glfw ${GLFW_LIBRARIES})
     target_link_libraries(MATH_fps_camera glfw ${GLFW_LIBRARIES})
     target_link_libraries(LIGHT_color glfw ${GLFW_LIBRARIES})
-    target_link_libraries(TERRAIN_simple_voxel glfw ${GLFW_LIBRARIES})
 endif()
