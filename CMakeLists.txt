@@ -4,6 +4,7 @@ project(MATH_transformation)
 project(MATH_projection)
 project(MATH_fps_camera)
 project(LIGHT_color)
+project(TERRAIN_simple_voxel)
 
 FILE(GLOB ALL_CGLM_SRC "deps/ext/cglm/src/*.c")
 
@@ -15,7 +16,7 @@ add_executable(
     src/MATH_transformation/MATH_transformation.c
     deps/shader.c
     deps/util.c
-    deps/ext/stb_image/stb_image.c
+    deps/ext/stb/stb_image.c
     deps/ext/glad/src/glad.c
     ${ALL_SRC}
 )
@@ -26,7 +27,7 @@ add_executable(
     src/MATH_projection/MATH_projection.c
     deps/shader.c
     deps/util.c
-    deps/ext/stb_image/stb_image.c
+    deps/ext/stb/stb_image.c
     deps/ext/glad/src/glad.c
     ${ALL_SRC}
 )
@@ -38,7 +39,7 @@ add_executable(
     src/MATH_fps_camera/camera.c
     deps/shader.c
     deps/util.c
-    deps/ext/stb_image/stb_image.c
+    deps/ext/stb/stb_image.c
     deps/ext/glad/src/glad.c
     ${ALL_SRC}
 )
@@ -50,7 +51,21 @@ add_executable(
     src/LIGHT_color/camera.c
     deps/shader.c
     deps/util.c
-    deps/ext/stb_image/stb_image.c
+    deps/ext/stb/stb_image.c
+    deps/ext/glad/src/glad.c
+    ${ALL_SRC}
+)
+
+# Project: TERRAIN_simple_voxel
+add_executable(
+    TERRAIN_simple_voxel
+    src/TERRAIN_simple_voxel/TERRAIN_simple_voxel.c
+    src/TERRAIN_simple_voxel/camera.c
+    src/TERRAIN_simple_voxel/terrain.c
+    deps/shader.c
+    deps/util.c
+    deps/ext/stb/stb_image.c
+    deps/ext/stb/stb_ds.c
     deps/ext/glad/src/glad.c
     ${ALL_SRC}
 )
@@ -60,11 +75,12 @@ include_directories(deps)
 include_directories(deps/ext/glfw/include)
 include_directories(deps/ext/glad/include)
 include_directories(deps/ext/cglm/include)
-include_directories(deps/ext/stb_image)
+include_directories(deps/ext/stb)
 
 if (MINGW)
     target_link_libraries(MATH_transformation glfw ${GLFW_LIBRARIES})
     target_link_libraries(MATH_projection glfw ${GLFW_LIBRARIES})
     target_link_libraries(MATH_fps_camera glfw ${GLFW_LIBRARIES})
     target_link_libraries(LIGHT_color glfw ${GLFW_LIBRARIES})
+    target_link_libraries(TERRAIN_simple_voxel glfw ${GLFW_LIBRARIES})
 endif()
