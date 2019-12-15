@@ -17,6 +17,7 @@
 * [投影 - Projection](src/MATH_projection/projection.md)
 * [FPS相機 - FPS camera](src/MATH_fps_camera/fps_camera.md)
 * [顏色 - Color](src/LIGHT_color/color.md)
+* [Phong lighting model](src/LIGHT_phong/phong.md)
 
 ## 學習來源(Learning Resources)
 * [Learn OpenGL](https://learnopengl.com/)

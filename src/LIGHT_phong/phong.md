@@ -28,10 +28,3 @@
 * 點積運算的時候，若角度大於`90`則會產生負值。
 * 在物體進行非等比放大時，頂點的法向量會產生變化。則需要  `Normal matrix`
     * [數學分析](http://www.lighthouse3d.com/tutorials/glsl-12-tutorial/the-normal-matrix/)
-
-#### impl
-- 直接拿`LIGHT_color`來改
-- 主要改shader
-- 兩種模式
-   - 物體會放大/縮小
-   - 燈會繞
