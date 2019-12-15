@@ -4,7 +4,7 @@ project(MATH_transformation)
 project(MATH_projection)
 project(MATH_fps_camera)
 project(LIGHT_color)
-project(TERRAIN_simple_voxel)
+project(LIGHT_phong)
 
 FILE(GLOB ALL_CGLM_SRC "deps/ext/cglm/src/*.c")
 
@@ -56,6 +56,18 @@ add_executable(
     ${ALL_SRC}
 )
 
+# Project: LIGHT_phong
+add_executable(
+    LIGHT_phong
+    src/LIGHT_phong/LIGHT_phong.c
+    src/LIGHT_phong/camera.c
+    deps/shader.c
+    deps/util.c
+    deps/ext/stb/stb_image.c
+    deps/ext/glad/src/glad.c
+    ${ALL_SRC}
+)
+
 add_subdirectory(deps/ext/glfw)
 include_directories(deps)
 include_directories(deps/ext/glfw/include)
@@ -68,4 +80,5 @@ if (MINGW)
     target_link_libraries(MATH_projection glfw ${GLFW_LIBRARIES})
     target_link_libraries(MATH_fps_camera glfw ${GLFW_LIBRARIES})
     target_link_libraries(LIGHT_color glfw ${GLFW_LIBRARIES})
+    target_link_libraries(LIGHT_phong glfw ${GLFW_LIBRARIES})
 endif()
