@@ -5,6 +5,7 @@ project(MATH_projection)
 project(MATH_fps_camera)
 project(LIGHT_color)
 project(LIGHT_phong)
+project(BASIC_material)
 
 FILE(GLOB ALL_CGLM_SRC "deps/ext/cglm/src/*.c")
 
@@ -68,6 +69,18 @@ add_executable(
     ${ALL_SRC}
 )
 
+# Project: BASIC_material
+add_executable(
+    BASIC_material
+    src/BASIC_material/BASIC_material.c
+    src/BASIC_material/camera.c
+    deps/shader.c
+    deps/util.c
+    deps/ext/stb/stb_image.c
+    deps/ext/glad/src/glad.c
+    ${ALL_SRC}
+)
+
 add_subdirectory(deps/ext/glfw)
 include_directories(deps)
 include_directories(deps/ext/glfw/include)
@@ -81,4 +94,5 @@ if (MINGW)
     target_link_libraries(MATH_fps_camera glfw ${GLFW_LIBRARIES})
     target_link_libraries(LIGHT_color glfw ${GLFW_LIBRARIES})
     target_link_libraries(LIGHT_phong glfw ${GLFW_LIBRARIES})
+    target_link_libraries(BASIC_material glfw ${GLFW_LIBRARIES})
 endif()

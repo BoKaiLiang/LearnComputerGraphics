@@ -64,12 +64,8 @@ void on_scroll_callback(GLFWwindow* window, double x_offset, double y_offset) {
     camera_process_zoom(&camera, y_offset);
 }
 
-// light properties
-vec3 light_color = { 1.0f, 1.0f, 1.0f };
-vec3 light_pos = { 1.2f, 1.0f, 2.0f };
-
-// orange color
-vec3 orange_color = {1.0f, 0.5f, 0.31f};
+// light position
+vec3 light_pos = { 1.2f, 1.0f, 1.5f };
 
 int main()
 {
@@ -80,7 +76,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // glfw window creation
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Phong shading", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Material", NULL, NULL);
     if (window == NULL)
     {
         glfwTerminate();
@@ -103,7 +99,7 @@ int main()
 
     // build and compile our shader program
     shader_t obj_shader, lamp_shader;
-    create_shader(&obj_shader, "shaders/phong.vert", "shaders/phong.frag");
+    create_shader(&obj_shader, "shaders/material.vert", "shaders/material.frag");
     create_shader(&lamp_shader, "shaders/lamp.vert", "shaders/lamp.frag");
 
     unsigned int VBO, OBJ_VAO, LIGHT_VAO;
@@ -130,16 +126,6 @@ int main()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    // second, configure the light's VAO (VBO stays the same; the vertices are the same for the light object which is also a 3D cube)
-    unsigned int lightVAO;
-    glGenVertexArrays(1, &lightVAO);
-    glBindVertexArray(lightVAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    // note that we update the lamp's position attribute's stride to reflect the updated buffer data
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
     // Init camera
     camera_init(&camera, (vec3){ 0.0f, 0.0f, 3.0f }, GLM_YUP, YAW, PITCH);
 
@@ -152,22 +138,43 @@ int main()
         last_frame = current_time;
 
         // render
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // OBJECT //
         glUseProgram(obj_shader);
+
+        set_uniform_vec3(&obj_shader, "light.position", light_pos);
+        set_uniform_vec3(&obj_shader, "viewPos", camera.pos);
 
         // transformation, view, projection
         mat4 view = GLM_MAT4_IDENTITY_INIT;
         mat4 proj = GLM_MAT4_IDENTITY_INIT;
         mat4 model = GLM_MAT4_IDENTITY_INIT;
 
-        set_uniform_vec3(&obj_shader, "LightPos", light_pos);
-        set_uniform_vec3(&obj_shader, "ViewPos", camera.pos);
-        set_uniform_vec3(&obj_shader, "ObjColor", orange_color);
-        set_uniform_vec3(&obj_shader, "LightColor", light_color);
+        // light properties
+        vec3 light_color = GLM_VEC3_ZERO_INIT;
+        light_color[0] = sinf((float)glfwGetTime()) * 2.0f;
+        light_color[1] = sinf((float)glfwGetTime()) * 0.7f;
+        light_color[2] = sinf((float)glfwGetTime()) * 1.3f;
 
+        vec3 diffuse_color = GLM_VEC3_ZERO_INIT;
+        glm_vec3_scale(light_color, 0.5f, diffuse_color);
+
+        vec3 ambient_color = GLM_VEC3_ZERO_INIT;
+        glm_vec3_scale(diffuse_color, 0.2f, ambient_color);
+
+        set_uniform_vec3(&obj_shader, "light.ambient", ambient_color);
+        set_uniform_vec3(&obj_shader, "light.diffuse", diffuse_color);
+        set_uniform_vec3(&obj_shader, "light.specular", (vec3){1.0f, 1.0f, 1.0f});
+
+        // material properties
+        set_uniform_vec3(&obj_shader, "material.ambient", (vec3){1.0f, 0.5f, 0.31f});
+        set_uniform_vec3(&obj_shader, "material.diffuse", (vec3){1.0f, 0.5f, 0.31f});
+        set_uniform_vec3(&obj_shader, "material.specular", (vec3){0.5f, 0.5f, 0.5f});
+        set_uniform_float(&obj_shader, "material.shininess", 32.0f);
+
+        // transformation
         camera_get_view_mat4(&camera, view);
         set_uniform_mat4(&obj_shader, "view", view);
 
@@ -201,7 +208,7 @@ int main()
         light_pos[1] = sin(glfwGetTime() / 2.0f) * 1.0f;
         set_uniform_mat4(&lamp_shader, "model", l_model);
         
-        set_uniform_vec3(&lamp_shader, "LightColor", light_color);
+        set_uniform_vec3(&lamp_shader, "LightColor", (vec3){1.0f, 1.0f, 1.0f});
 
         glBindVertexArray(LIGHT_VAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
