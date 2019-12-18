@@ -7,6 +7,7 @@ project(LIGHT_color)
 project(LIGHT_phong)
 project(BASIC_material)
 project(BASIC_light_map)
+project(LIGHT_caster)
 
 FILE(GLOB ALL_CGLM_SRC "deps/ext/cglm/src/*.c")
 
@@ -94,6 +95,18 @@ add_executable(
     ${ALL_SRC}
 )
 
+# Project: LIGHT_caster
+add_executable(
+    LIGHT_caster
+    src/LIGHT_caster/LIGHT_caster.c
+    src/LIGHT_caster/camera.c
+    deps/shader.c
+    deps/util.c
+    deps/ext/stb/stb_image.c
+    deps/ext/glad/src/glad.c
+    ${ALL_SRC}
+)
+
 add_subdirectory(deps/ext/glfw)
 include_directories(deps)
 include_directories(deps/ext/glfw/include)
@@ -109,4 +122,5 @@ if (MINGW)
     target_link_libraries(LIGHT_phong glfw ${GLFW_LIBRARIES})
     target_link_libraries(BASIC_material glfw ${GLFW_LIBRARIES})
     target_link_libraries(BASIC_light_map glfw ${GLFW_LIBRARIES})
+    target_link_libraries(LIGHT_caster glfw ${GLFW_LIBRARIES})
 endif()
