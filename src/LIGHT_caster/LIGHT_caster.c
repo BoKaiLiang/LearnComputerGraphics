@@ -101,9 +101,10 @@ int main()
     glEnable(GL_DEPTH_TEST);
 
     // build and compile our shader program
-    shader_t dir_light_shader, point_light_shader, lamp_shader;
+    shader_t dir_light_shader, point_light_shader, spot_light_shader, lamp_shader;
     create_shader(&dir_light_shader, "shaders/dir_light.vert", "shaders/dir_light.frag");
     create_shader(&point_light_shader, "shaders/point_light.vert", "shaders/point_light.frag");
+    create_shader(&spot_light_shader, "shaders/spot_light.vert", "shaders/spot_light.frag");
     create_shader(&lamp_shader, "shaders/lamp.vert", "shaders/lamp.frag");
 
     unsigned int VBO, OBJ_VAO, LIGHT_VAO;
@@ -137,10 +138,13 @@ int main()
     unsigned int specular_texture = load_texture("textures/steelborder.png");
     glUseProgram(dir_light_shader);
     glUseProgram(point_light_shader);
+    glUseProgram(spot_light_shader);
     set_uniform_int(&dir_light_shader, "material.diffuse", 0);
     set_uniform_int(&dir_light_shader, "material.specular", 1);
     set_uniform_int(&point_light_shader, "material.diffuse", 0);
     set_uniform_int(&point_light_shader, "material.specular", 1);
+    set_uniform_int(&spot_light_shader, "material.diffuse", 0);
+    set_uniform_int(&spot_light_shader, "material.specular", 1);
 
 
     // Init camera
@@ -213,7 +217,8 @@ int main()
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 #endif
-        
+
+#if 0
         //// PROCESS POINT LIGHT ////
         glUseProgram(point_light_shader);
 
@@ -293,6 +298,60 @@ int main()
 
         glBindVertexArray(LIGHT_VAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
+#endif
+
+        //// PROCESS SPOT LIGHT ////
+        glUseProgram(spot_light_shader);
+
+        set_uniform_vec3(&spot_light_shader, "light.position", camera.pos);
+        set_uniform_vec3(&spot_light_shader, "light.direction", camera.front);
+        set_uniform_float(&spot_light_shader, "light.cut_off", cosf(glm_rad(12.5f)));
+        set_uniform_float(&spot_light_shader, "light.outer_cut_off", cosf(glm_rad(17.5f)));
+        set_uniform_vec3(&spot_light_shader, "viewPos", camera.pos);
+
+        // transformation, view, projection
+        mat4 view = GLM_MAT4_IDENTITY_INIT;
+        mat4 proj = GLM_MAT4_IDENTITY_INIT;
+
+        // directional light properties
+        vec3 light_color = GLM_VEC3_ONE_INIT;
+
+        set_uniform_vec3(&spot_light_shader, "light.ambient", (vec3){0.1f, 0.1f, 0.1f});
+        set_uniform_vec3(&spot_light_shader, "light.diffuse", (vec3){0.8f, 0.8f, 0.8f});
+        set_uniform_vec3(&spot_light_shader, "light.specular", GLM_VEC3_ONE);
+        set_uniform_float(&spot_light_shader, "light.constant", 1.0f);
+        set_uniform_float(&spot_light_shader, "light.linear", 0.09f);
+        set_uniform_float(&spot_light_shader, "light.constant", 0.032f);
+
+        // material properties
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, diffuse_texture);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, specular_texture);
+        set_uniform_float(&spot_light_shader, "material.shininess", 32.0f);
+
+        // transformation
+        camera_get_view_mat4(&camera, view);
+        set_uniform_mat4(&spot_light_shader, "view", view);
+
+        glm_perspective(glm_rad(camera.zoom), (float)SCR_WIDTH/(float)SCR_HEIGHT, 0.1f, 100.0f, proj);
+        set_uniform_mat4(&spot_light_shader, "projection", proj);
+
+        glBindVertexArray(OBJ_VAO);
+        for (int i = 0; i < 10; i++) {
+            
+            mat4 model = GLM_MAT4_IDENTITY_INIT;
+            vec3 pos = GLM_VEC3_ZERO_INIT;
+            for (int idx = 0; idx < 3; idx++) {
+                pos[idx] = cubePositions[i][idx];
+            }
+            glm_translate(model, pos);
+            float angle = 20.0f * i;
+            glm_rotate(model, glm_rad(angle), (vec3){1.0f, 0.3f, 0.5f});
+            set_uniform_mat4(&spot_light_shader, "model", model);
+
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();
