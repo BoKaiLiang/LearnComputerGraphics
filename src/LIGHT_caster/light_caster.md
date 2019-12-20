@@ -29,7 +29,9 @@
 ### 聚光 (Spot light)
 * 光源特定指向某一個方向，只有在特定半徑內物體才會被照亮，例如: 手電筒。
 
-***待續***
+* 需要**光的位置向量(光的方向向量)**、**光照射的方向**、**切光角(cut off)**
+
+**注意:**
+    * `cosine`的運算越接近90度數字越小，0度則為1.0。
 
 * [聚光燈計算](https://learnopengl.com/Lighting/Light-casters)
-* [聚光燈解釋](http://ogldev.atspace.co.uk/www/tutorial21/tutorial21.html)
