@@ -8,6 +8,7 @@ project(LIGHT_phong)
 project(BASIC_material)
 project(BASIC_light_map)
 project(LIGHT_caster)
+project(RENDER_line)
 
 FILE(GLOB ALL_CGLM_SRC "deps/ext/cglm/src/*.c")
 
@@ -105,6 +106,13 @@ add_executable(
     deps/ext/stb/stb_image.c
     deps/ext/glad/src/glad.c
     ${ALL_SRC}
+)
+
+# Project: RENDER_line
+add_executable(
+    RENDER_line
+    src/RENDER_line/RENDER_line.c
+    src/RENDER_line/draw_line.c
 )
 
 add_subdirectory(deps/ext/glfw)

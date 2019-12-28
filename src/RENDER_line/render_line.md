@@ -25,4 +25,5 @@
 
 ## Resources
 * [用 C 语言画直线](https://zhuanlan.zhihu.com/p/30553006)
+* [Lesson 1: Bresenham’s Line Drawing Algorithm](https://github.com/ssloy/tinyrenderer/wiki/Lesson-1:-Bresenham%E2%80%99s-Line-Drawing-Algorithm)
 * [Wiki](https://zh.wikipedia.org/wiki/%E5%B8%83%E9%9B%B7%E6%A3%AE%E6%BC%A2%E5%A7%86%E7%9B%B4%E7%B7%9A%E6%BC%94%E7%AE%97%E6%B3%95)
