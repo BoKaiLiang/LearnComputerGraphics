@@ -9,6 +9,7 @@ project(BASIC_material)
 project(BASIC_light_map)
 project(LIGHT_caster)
 project(RENDER_line)
+project(MATH_cg)
 
 FILE(GLOB ALL_CGLM_SRC "deps/ext/cglm/src/*.c")
 
@@ -115,6 +116,21 @@ add_executable(
     src/RENDER_line/draw_line.c
 )
 
+# Project: MATH
+add_executable(
+    MATH_cg
+    src/MATH/MATH.c
+    src/MATH/vec.c
+    src/MATH/mat.c
+    src/MATH/utilm.c
+    src/MATH/camera.c
+    src/MATH/shader.c
+    deps/util.c
+    deps/ext/stb/stb_image.c
+    deps/ext/glad/src/glad.c
+    # src/MATH/trans.c
+)
+
 add_subdirectory(deps/ext/glfw)
 include_directories(deps)
 include_directories(deps/ext/glfw/include)
@@ -131,4 +147,5 @@ if (MINGW)
     target_link_libraries(BASIC_material glfw ${GLFW_LIBRARIES})
     target_link_libraries(BASIC_light_map glfw ${GLFW_LIBRARIES})
     target_link_libraries(LIGHT_caster glfw ${GLFW_LIBRARIES})
+    target_link_libraries(MATH_cg glfw ${GLFW_LIBRARIES})
 endif()
