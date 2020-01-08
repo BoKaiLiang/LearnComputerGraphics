@@ -1,6 +1,63 @@
 #include "mat.h"
 
-#include "math.h"
+#include <math.h>
+#include <assert.h>
+
+// Inverse & transpose are from this author - zauonlok: https://github.com/zauonlok/renderer/blob/master/renderer/core/maths.c
+
+static float mat3_det(mat3_t m)
+{
+    float a = +m.mat[0][0] * (m.mat[1][1] * m.mat[2][2] - m.mat[1][2] * m.mat[2][1]);
+    float b = -m.mat[1][0] * (m.mat[0][1] * m.mat[2][2] - m.mat[0][2] * m.mat[2][1]);
+    float c = +m.mat[2][0] * (m.mat[0][1] * m.mat[1][2] - m.mat[0][2] * m.mat[1][1]);
+    return a + b + c;
+}
+
+static mat3_t mat3_adjoint(mat3_t m)
+{
+    mat3_t adjoint;
+    adjoint.mat[0][0] = +(m.mat[1][1] * m.mat[2][2] - m.mat[2][1] * m.mat[1][2]);
+    adjoint.mat[1][0] = -(m.mat[1][0] * m.mat[2][2] - m.mat[2][0] * m.mat[1][2]);
+    adjoint.mat[2][0] = +(m.mat[1][0] * m.mat[2][1] - m.mat[2][0] * m.mat[1][1]);
+    adjoint.mat[0][1] = -(m.mat[0][1] * m.mat[2][2] - m.mat[2][1] * m.mat[0][2]);
+    adjoint.mat[1][1] = +(m.mat[0][0] * m.mat[2][2] - m.mat[2][0] * m.mat[0][2]);
+    adjoint.mat[2][1] = -(m.mat[0][0] * m.mat[2][1] - m.mat[2][0] * m.mat[0][1]);
+    adjoint.mat[0][2] = +(m.mat[0][1] * m.mat[1][2] - m.mat[1][1] * m.mat[0][2]);
+    adjoint.mat[1][2] = -(m.mat[0][0] * m.mat[1][2] - m.mat[1][0] * m.mat[0][2]);
+    adjoint.mat[2][2] = +(m.mat[0][0] * m.mat[1][1] - m.mat[1][0] * m.mat[0][1]);
+    return adjoint;
+}
+
+static float mat4_minor(mat4_t m, int row, int col)
+{
+    mat3_t cut_down;
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            int r = i < row ? i : i + 1;
+            int c = j < col ? j : j + 1;
+            cut_down.mat[i][j] = m.mat[r][c];
+        }
+    }
+    return mat3_det(cut_down);
+}
+
+static float mat4_cofactor(mat4_t m, int row, int col)
+{
+    float sign = (row + col) % 2 == 0 ? 1.0f : -1.0f;
+    float minor = mat4_minor(m, row, col);
+    return sign * minor;
+}
+
+static mat4_t mat4_adjoint(mat4_t m)
+{
+    mat4_t adjoint;
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            adjoint.mat[j][i] = mat4_cofactor(m, i, j);
+        }
+    }
+    return adjoint;
+}
 
 // Matrix 3x3 operations
 mat3_t mat3_identity()
@@ -65,6 +122,37 @@ mat3_t mat3_mul_mat3(mat3_t mat1, mat3_t mat2)
     m.mat[2][2] = mat1.mat[0][2] * mat2.mat[2][2] + mat1.mat[1][2] * mat2.mat[2][1] + mat1.mat[2][2] * mat2.mat[2][2];
 
     return m;
+}
+
+mat3_t mat3_inverse(mat3_t m)
+{
+    float det = mat3_det(m);
+    assert(0 != det);
+
+    mat3_t adj = mat3_adjoint(m);
+    
+    mat3_t inverse = mat3_from_vec3(
+        vec3_scale(adj.vec[0], 1 / det),
+        vec3_scale(adj.vec[1], 1 / det),
+        vec3_scale(adj.vec[2], 1 / det)
+    );
+
+    return inverse;
+}
+
+mat3_t mat3_transpose(mat3_t m)
+{
+    mat3_t transpose;
+
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            transpose.mat[i][j] = m.mat[j][i];
+        }
+    }
+
+    return transpose;
 }
 
 // Matrix 4x4 operations
@@ -144,6 +232,41 @@ mat4_t mat4_mul_mat4(mat4_t mat1, mat4_t mat2)
     return m;
 }
 
+// https://math.stackexchange.com/questions/2525008/relationship-between-determinant-of-matrix-and-determinant-of-adjoint
+
+mat4_t mat4_inverse(mat4_t m)
+{
+    mat4_t adj = mat4_adjoint(m);
+    float det = 0.0f;
+    for (int i = 0; i < 4; i++){
+        det += m.mat[i][0] * adj.mat[0][i];
+    }
+    assert(0 != det);
+
+    mat4_t inverse;
+
+    inverse.vec[0] = vec4_scale(adj.vec[0], 1 / det);
+    inverse.vec[1] = vec4_scale(adj.vec[1], 1 / det);
+    inverse.vec[2] = vec4_scale(adj.vec[2], 1 / det);
+    inverse.vec[3] = vec4_scale(adj.vec[3], 1 / det);
+
+    return inverse;
+}
+
+mat4_t mat4_transpose(mat4_t m)
+{
+    mat4_t transpose;
+
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            transpose.mat[i][j] = m.mat[j][i];
+        }
+    }
+
+    return transpose;
+}
 
 // Transformations
 

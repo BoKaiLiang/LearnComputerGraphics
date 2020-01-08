@@ -23,6 +23,8 @@ mat3_t mat3_from_vec3(vec3_t col0, vec3_t col1, vec3_t col2);
 mat3_t mat3_from_mat4(mat4_t mat);
 vec3_t mat3_mul_vec3(mat3_t mat, vec3_t vec);
 mat3_t mat3_mul_mat3(mat3_t mat1, mat3_t mat2);
+mat3_t mat3_inverse(mat3_t m);
+mat3_t mat3_transpose(mat3_t m);
 
 // Matrix 4x4 operations
 mat4_t mat4_identity();
@@ -30,6 +32,8 @@ mat4_t mat4_from_vec4(vec4_t col0, vec4_t col1, vec4_t col2, vec4_t col3);
 mat4_t mat4_from_mat3(mat3_t mat);
 vec4_t mat4_mul_vec4(mat4_t mat, vec4_t vec);
 mat4_t mat4_mul_mat4(mat4_t mat1, mat4_t mat2);
+mat4_t mat4_inverse(mat4_t m);
+mat4_t mat4_transpose(mat4_t m);
 
 // Transformations (3D)
 mat4_t mat4_translate(mat4_t origin, float x, float y, float z);

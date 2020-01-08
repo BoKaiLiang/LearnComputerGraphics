@@ -1,3 +1,36 @@
+#include "mat.h"
+#include <stdio.h>
+
+int main()
+{
+    mat3_t m3;
+    m3.vec[0] = vec3_init(1, 2, 3);
+    m3.vec[1] = vec3_init(4, 5, 6);
+    m3.vec[2] = vec3_init(7, 8, 9);
+    mat3_t m3t = mat3_transpose(m3);
+
+    mat4_t m4;
+    m4.vec[0] = vec4_init(1, 2, 3, 4);
+    m4.vec[1] = vec4_init(5, 6, 7, 8);
+    m4.vec[2] = vec4_init(9, 10, 11, 12);
+    m4.vec[3] = vec4_init(13, 14, 15, 16);
+    mat4_t m4t = mat4_transpose(m4);
+
+    mat3_t m3i = mat3_inverse(m3);
+
+    mat4_t m41;
+    m41.vec[0] = vec4_init(7, 12, 3, 6);
+    m41.vec[1] = vec4_init(2, 9, 4, 4);
+    m41.vec[2] = vec4_init(8, 0, 1, 2);
+    m41.vec[3] = vec4_init(3, 2, 9, 7);
+
+    mat4_t mat41inv = mat4_inverse(m41);
+
+    return 0;
+}
+
+#if 0
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stb_image.h>
@@ -235,6 +268,8 @@ int main()
     glfwTerminate();
     return 0;
 }
+#endif
+
 
 #if 0
 #include <glad/glad.h>
