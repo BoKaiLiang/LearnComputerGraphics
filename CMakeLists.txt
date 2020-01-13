@@ -10,10 +10,17 @@ project(BASIC_light_map)
 project(LIGHT_caster)
 project(RENDER_line)
 project(MATH_cg)
+project(LOAD_OBJ_MODEL)
 
 FILE(GLOB ALL_CGLM_SRC "deps/ext/cglm/src/*.c")
 
-add_definitions(-std=c99 -O3)
+if (MINGW)
+    add_definitions(-std=c99 -O3)
+endif()
+
+if(MSVC)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+endif()
 
 # Project: MATH_transform
 add_executable(
@@ -128,7 +135,22 @@ add_executable(
     deps/util.c
     deps/ext/stb/stb_image.c
     deps/ext/glad/src/glad.c
-    # src/MATH/trans.c
+)
+
+# LOAD_OBJ_MODEL
+add_executable(
+    LOAD_OBJ_MODEL
+    src/MATH/vec.c
+    src/MATH/mat.c
+    src/MATH/utilm.c
+    src/MATH/camera.c
+    src/MATH/shader.c
+    src/MODEL_load_obj/dyarray.c
+    src/MODEL_load_obj/mesh.c
+    src/MODEL_load_obj/MODEL_load_obj.c
+    deps/util.c
+    deps/ext/stb/stb_image.c
+    deps/ext/glad/src/glad.c
 )
 
 add_subdirectory(deps/ext/glfw)
@@ -148,4 +170,5 @@ if (MINGW)
     target_link_libraries(BASIC_light_map glfw ${GLFW_LIBRARIES})
     target_link_libraries(LIGHT_caster glfw ${GLFW_LIBRARIES})
     target_link_libraries(MATH_cg glfw ${GLFW_LIBRARIES})
+    target_link_libraries(LOAD_OBJ_MODEL glfw ${GLFW_LIBRARIES})
 endif()

@@ -1,4 +1,3 @@
-#if 0
 #include "mat.h"
 #include <stdio.h>
 
@@ -29,9 +28,8 @@ int main()
 
     return 0;
 }
-#endif
 
-#if 1
+#if 0
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
